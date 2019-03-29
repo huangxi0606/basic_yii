@@ -1,0 +1,15 @@
+.input-group-btn .ke-form .ke-button-common {
+    background: url(button.gif) top right;
+    height:34px;
+    line-height:34px;
+}
+.input-group-btn .ke-form .ke-button{
+    font-family: "Microsoft YaHei UI", "微软雅黑", "宋体";
+    font-size: 14px;
+    margin-left:10px;
+    padding-left:20px;
+    background:url(folder.gif) 0px 10px no-repeat;
+}
+.input-group-btn .ke-form .ke-upload-file{
+    cursor:pointer;
+}
