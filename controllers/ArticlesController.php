@@ -140,15 +140,28 @@ class ArticlesController extends BaseController
         }
     }
 
-    public function actionBand(){
-        $keyword =Yii::$app->request->post()['keyword'];
-        $bands = Bands::find()-> Where(['like', 'bank_name',$keyword])->select('bank_name')->asArray()->all();
-        if($bands) {
-            $data['code']="200";
-            $data['message']="成功";
-            $data['bands'] =$bands;
-            return \yii\helpers\Json::encode($bands);
+    /**
+     * 联想查询
+     * @param $q
+     * @return array
+     */
+    public function actionBand ($q)
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $out = ['results' => ['id' => '', 'text' => '']];
+        if (!$q) {
+            return $out;
         }
 
+        $data = Bands::find()
+            ->select('id, band_name as text')
+            ->andFilterWhere(['like', 'band_name', $q])
+            ->limit(10)
+            ->asArray()
+            ->all();
+
+        $out['results'] = array_values($data);
+
+        return $out;
     }
 }

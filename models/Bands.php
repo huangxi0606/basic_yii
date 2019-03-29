@@ -26,7 +26,7 @@ class Bands extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['bank_name'], 'string', 'max' => 32],
+            [['band_name'], 'string', 'max' => 32],
         ];
     }
 
@@ -37,7 +37,7 @@ class Bands extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'bank_name' => 'Bank Name',
+            'band_name' => 'Band Name',
         ];
     }
 }

@@ -2,6 +2,8 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use kartik\select2\Select2;
+use yii\web\JsExpression;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Articles */
@@ -12,7 +14,26 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'article_name')->textInput(['maxlength' => true]) ?>
+    <?php
+    echo $form->field($model, 'article_name')->widget(Select2::classname(), [
+        'options' => ['placeholder' => '请输入名称 ...'],
+        'pluginOptions' => [
+            'placeholder' => 'search ...',
+            'allowClear' => true,
+            'language' => [
+                'errorLoading' => new JsExpression("function () { return 'Waiting...'; }"),
+            ],
+            'ajax' => [
+                'url' => \yii\helpers\Url::to(['band']),
+                'dataType' => 'json',
+                'data' => new JsExpression('function(params) { return {q:params.term}; }')
+            ],
+            'escapeMarkup' => new JsExpression('function (markup) { return markup; }'),
+            'templateResult' => new JsExpression('function(res) { return res.text; }'),
+            'templateSelection' => new JsExpression('function (res) { return res.text; }'),
+        ],
+    ]);
+    ?>
 
 
     <?= $form->field($model, 'cates_id')->dropDownList(\app\models\Articles::forDropDownList())?>
@@ -21,8 +42,7 @@ use yii\widgets\ActiveForm;
         'clientOptions' => [
             'url' => \yii\helpers\Url::to(['upload', 'dir' => 'image']),
         ],
-    ])
-    ?>
+    ]) ?>
 
     <?= $form->field($model, 'search_address')->textInput(['maxlength' => true]) ?>
 
@@ -51,7 +71,6 @@ use yii\widgets\ActiveForm;
 <script>
 <?php $this->beginBlock('js') ?>
     $('.quick').hide();
-    // search address
     $("#articles-search_address").keypress(function(){
         if(event.keyCode == 13){
             var name =$('#articles-search_address').val();
@@ -70,49 +89,12 @@ use yii\widgets\ActiveForm;
                         $('#articles-province').val(data.province);
                         $('#articles-city').val(data.city);
                         $('#articles-county').val(data.county);
-
                     }
-
                 }
             });
         }
         return false;
     });
-    // association search
-    $("#articles-article_name").keydown(function(){
-        var keyword =$.trim($("#articles-article_name").val());
-        serachband()
-        return false;
-    });
-    function serachband() {
-        var keyword =$.trim($("#articles-article_name").val());
-        if(keyword){
-            var url = '<?=  \yii\helpers\Url::to(['band']) ?>';
-            $.ajax({
-                url: url,
-                type: 'post',
-                data: {keyword:keyword},
-                success: function (res) {
-                    if(res){
-                        console.log(res)
-                        var data = JSON.parse(res);
-                        var html ='';
-                        $.each(data, function(i, item){
-                            $.each(item, function(c,v){
-                                console.log(v);
-                                $('.quick').show();
-                                html += '<option>'+ v +'</option>'
-                                $('.quick').append(html);
-                            });
-                        });
-
-                    }
-                }
-            });
-        }
-
-    }
-
 
     <?php $this->endBlock() ?>
 </script>
